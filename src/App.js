@@ -1,19 +1,43 @@
+//import react and redux here 
+//import the router | AppRouter
+//import the authorization for the sign in here 
+//import the TokenAuth here which includes the modal to enable the user
+//to sign in 
+//creat a const set the value of local storage and retreive the item by the token
+//use the component did mount method for this app
+//set the state to true
+//render the store here 
+
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { Provider } from 'react-redux';
+import configureStore from './store/configureStore';
+import AppRouter from './components/router/AppRouter';
+import { tokenAuth } from './actions/auth';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import TokenAuthLoader from './components/InitLoad/TokenAuthLoader';
+
+const store = configureStore();
 
 class App extends Component {
+  componentDidMount() {
+    //sign in automatically if the token exists 
+    const token = localStorage.getItem('token');
+    if (token) {
+      store.dispatch(tokenAuth(token));
+      this.setState({ open: true });
+    }
+  }
+
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
-      </div>
+      <Provider store={store}>
+        <MuiThemeProvider>
+          <div>
+            <AppRouter />
+            <TokenAuthLoader />
+          </div>
+        </MuiThemeProvider>
+      </Provider>
     );
   }
 }
